@@ -265,7 +265,7 @@ if st.button(
     ).strip()
 
     scenarios = [
-        st.session_state[f"scenario_{j+1}{i+1}"].strip()
+        st.session_state[f"scenario_{i+1}{j+1}"].strip()
         for i in range(3)
         for j in range(3)
     ]
