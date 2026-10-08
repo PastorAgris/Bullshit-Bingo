@@ -26,7 +26,7 @@ BACKGROUND_FILE = Path("background.jpg")
 
 
 # --------------------------------------------------
-# Background
+# Background and CSS
 # --------------------------------------------------
 
 def set_background(image_path):
@@ -52,13 +52,6 @@ def set_background(image_path):
             background-attachment: fixed;
             background-repeat: no-repeat;
         }}
-
-        @media (max-width: 768px) {{
-            .block-container {{
-                padding-left: 0.7rem;
-                padding-right: 0.7rem;
-            }}
-        }}
         </style>
         """,
         unsafe_allow_html=True
@@ -66,6 +59,66 @@ def set_background(image_path):
 
 
 set_background(BACKGROUND_FILE)
+
+st.markdown("""
+<style>
+
+/* Page spacing */
+@media (max-width: 768px) {
+    .block-container {
+        padding-left: 0.7rem;
+        padding-right: 0.7rem;
+    }
+}
+
+/* Bingo grid */
+.bingo-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 8px;
+    width: 100%;
+}
+
+/* Individual bingo cells */
+.bingo-cell {
+    box-sizing: border-box;
+    min-width: 0;
+    height: 120px;
+    padding: 8px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    text-align: center;
+    overflow-wrap: anywhere;
+    overflow-y: auto;
+
+    background: rgba(30, 30, 30, 0.75);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 10px;
+
+    color: white;
+    font-size: 15px;
+    line-height: 1.3;
+}
+
+/* Mobile optimization */
+@media (max-width: 600px) {
+
+    .bingo-grid {
+        gap: 5px;
+    }
+
+    .bingo-cell {
+        height: 100px;
+        padding: 5px;
+        font-size: 11px;
+    }
+}
+
+</style>
+""", unsafe_allow_html=True)
 
 
 # --------------------------------------------------
@@ -76,9 +129,13 @@ def load_cards():
     if JSON_FILE.exists():
         try:
             with open(JSON_FILE, "r", encoding="utf-8") as f:
-                return json.load(f)
+                data = json.load(f)
+                return data if isinstance(data, list) else []
+
         except (json.JSONDecodeError, OSError):
-            st.error("Die Bingo-Karten konnten nicht geladen werden.")
+            st.error(
+                "Die Bingo-Karten konnten nicht geladen werden."
+            )
 
     return []
 
@@ -155,11 +212,7 @@ st.text_input(
 
 st.subheader("🎯 Deine Bingo-Szenarien")
 
-cols = st.columns(
-    3,
-    gap="small",
-    stack_on_mobile=False
-)
+cols = st.columns(3, gap="small")
 
 for i in range(3):
     with cols[i]:
@@ -206,9 +259,17 @@ if st.button(
         st.warning("Bitte fülle alle 9 Felder aus!")
 
     else:
-        save_card(name, scenarios)
-        st.success("Deine Bingo-Karte wurde gespeichert!")
-        st.balloons()
+        try:
+            save_card(name, scenarios)
+            st.success(
+                "Deine Bingo-Karte wurde gespeichert!"
+            )
+            st.balloons()
+
+        except OSError:
+            st.error(
+                "Die Bingo-Karte konnte nicht gespeichert werden."
+            )
 
 
 # --------------------------------------------------
@@ -231,35 +292,20 @@ for card in reversed(cards):
         f"{card['name']} | {card['created_at']}"
     ):
 
-        cols = st.columns(
-            3,
-            gap="small",
-            stack_on_mobile=False
+        cells = ""
+
+        for scenario in card["scenarios"]:
+            cells += f"""
+                <div class="bingo-cell">
+                    {escape(scenario)}
+                </div>
+            """
+
+        st.markdown(
+            f"""
+            <div class="bingo-grid">
+                {cells}
+            </div>
+            """,
+            unsafe_allow_html=True
         )
-
-        for i, scenario in enumerate(card["scenarios"]):
-
-            with cols[i % 3]:
-
-                with st.container(
-                    border=True,
-                    height=120
-                ):
-
-                    st.markdown(
-                        f"""
-                        <div style="
-                            height: 90px;
-                            display: flex;
-                            align-items: center;
-                            justify-content: center;
-                            text-align: center;
-                            font-size: clamp(10px, 2.5vw, 16px);
-                            line-height: 1.2;
-                            overflow-wrap: anywhere;
-                        ">
-                            {escape(scenario)}
-                        </div>
-                        """,
-                        unsafe_allow_html=True
-                    )
