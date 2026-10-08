@@ -14,5 +14,21 @@
             "Elsa hat Beef mit jmd.",
             "Deep-Talk in der Sauna."
         ]
+    },
+    {
+        "name": "Marie",
+        "id": "2b54137d-cd91-4d71-9986-12c7351d9e1e",
+        "created_at": "2026-10-08T20:04:48",
+        "scenarios": [
+            "Jemand ist nach dem ersten Abend schon komplett besoffen und bereut am nächsten Morgen\nalles.",
+            "Ein Streit eskaliert wegen einer völlig banalen Kleinigkeit - Essen, Abwasch, Schlafplatz oder wer „hinter dem Rücken\" über wen geredet\nhat.",
+            "Jemand kündigt unter Tränen an: „Ich kann das hier nicht mehr!\"",
+            "Eine Person wird beim Lästern erwischt und versucht sich mit „Das habe ich ganz anders gemeint!\" herauszureden.",
+            "Es knistert plötzlich zwischen zwei Personen, mit denen wirklich niemand gerechnet hat.",
+            "Es wird eine Allianz gegründet um zu gewinnen.",
+            "Jemand sagt 'Ich bin nicht hier, um Freunde zu finden'",
+            "Eine Person erklärt sich selbst zum Anführer / zur Anführerin und niemand hat danach gefragt.",
+            "Jemand sagt „Heute trinke ich nichts!\" und ist spätestens am Abend komplett anders unterwegs."
+        ]
     }
 ]
