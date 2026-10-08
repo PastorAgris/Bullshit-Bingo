@@ -26,7 +26,7 @@ BACKGROUND_FILE = Path("background.jpg")
 
 
 # --------------------------------------------------
-# Background and CSS
+# Background
 # --------------------------------------------------
 
 def set_background(image_path):
@@ -36,7 +36,7 @@ def set_background(image_path):
     with open(image_path, "rb") as f:
         encoded = base64.b64encode(f.read()).decode()
 
-    st.markdown(
+    st.html(
         f"""
         <style>
         .stApp {{
@@ -53,33 +53,53 @@ def set_background(image_path):
             background-repeat: no-repeat;
         }}
         </style>
-        """,
-        unsafe_allow_html=True
+        """
     )
 
 
 set_background(BACKGROUND_FILE)
 
-st.markdown("""
+
+# --------------------------------------------------
+# CSS
+# --------------------------------------------------
+
+st.html("""
 <style>
 
 /* Page spacing */
 @media (max-width: 768px) {
     .block-container {
-        padding-left: 0.7rem;
-        padding-right: 0.7rem;
+        padding-left: 0.5rem;
+        padding-right: 0.5rem;
+    }
+
+    /* Keep input columns horizontal */
+    div[data-testid="stHorizontalBlock"] {
+        flex-wrap: nowrap !important;
+        gap: 5px !important;
+    }
+
+    div[data-testid="stHorizontalBlock"] > div[data-testid="stColumn"] {
+        flex: 1 1 0% !important;
+        width: 0 !important;
+        min-width: 0 !important;
+    }
+
+    div[data-testid="stTextArea"] textarea {
+        font-size: 11px !important;
+        padding: 5px !important;
     }
 }
 
-/* Bingo grid */
+/* Saved bingo cards */
 .bingo-grid {
-    display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    display: grid !important;
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
     gap: 8px;
     width: 100%;
 }
 
-/* Individual bingo cells */
 .bingo-cell {
     box-sizing: border-box;
     min-width: 0;
@@ -103,9 +123,7 @@ st.markdown("""
     line-height: 1.3;
 }
 
-/* Mobile optimization */
 @media (max-width: 600px) {
-
     .bingo-grid {
         gap: 5px;
     }
@@ -118,7 +136,7 @@ st.markdown("""
 }
 
 </style>
-""", unsafe_allow_html=True)
+""")
 
 
 # --------------------------------------------------
@@ -292,20 +310,11 @@ for card in reversed(cards):
         f"{card['name']} | {card['created_at']}"
     ):
 
-        cells = ""
+        cells = "".join(
+            f'<div class="bingo-cell">{escape(str(scenario))}</div>'
+            for scenario in card["scenarios"]
+        )
 
-        for scenario in card["scenarios"]:
-            cells += f"""
-                <div class="bingo-cell">
-                    {escape(scenario)}
-                </div>
-            """
-
-        st.markdown(
-            f"""
-            <div class="bingo-grid">
-                {cells}
-            </div>
-            """,
-            unsafe_allow_html=True
+        st.html(
+            f'<div class="bingo-grid">{cells}</div>'
         )
