@@ -318,3 +318,16 @@ for card in reversed(cards):
         st.html(
             f'<div class="bingo-grid">{cells}</div>'
         )
+
+
+if cards:
+    st.download_button(
+        label="📥 Alle Bingo-Karten herunterladen",
+        data=json.dumps(
+            cards,
+            indent=4,
+            ensure_ascii=False
+        ),
+        file_name="bingo_cards.json",
+        mime="application/json"
+    )
